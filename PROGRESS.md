@@ -1,6 +1,6 @@
 # Development Progress & Roadmap
 
-## 🗺️ 8-Week Development Roadmap (Aug 11 - Oct 11, 2026)
+## 8-Week Development Roadmap (Aug 11 - Oct 11, 2026)
 - [x] **Week 1:** Product Scope & Architecture Definition
 - [ ] **Week 2:** Frontend Foundation & Tiptap Editor Core
 - [ ] **Week 3:** Yjs CRDT & Real-Time Collaboration Implementation
@@ -12,7 +12,7 @@
 
 ---
 
-## 📅 Daily Engineering Log
+## Daily Engineering Log
 
 ### Week 1 — Product & Architecture
 
