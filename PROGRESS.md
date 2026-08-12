@@ -1,6 +1,6 @@
 # Development Progress & Roadmap
 
-## 8-Week Development Roadmap (Aug 11 - Oct 11, 2026)
+## 🗺️ 8-Week Development Roadmap (Aug 11 - Oct 11, 2026)
 - [x] **Week 1:** Product Scope & Architecture Definition
 - [ ] **Week 2:** Frontend Foundation & Tiptap Editor Core
 - [ ] **Week 3:** Yjs CRDT & Real-Time Collaboration Implementation
@@ -12,7 +12,7 @@
 
 ---
 
-## Daily Engineering Log
+## 📅 Daily Engineering Log
 
 ### Week 1 — Product & Architecture
 
@@ -24,3 +24,13 @@
 - Designed system architecture (React + Tiptap + Yjs + FastAPI).
 - Initialized Git repository and documentation.
 - Separated high-level documentation (`README.md`) from project tracking (`PROGRESS.md`).
+
+#### Day 2 (August 12, 2026)
+**Objective:** Initialize frontend and backend projects.
+**Status:** Completed
+- Configured root `.gitignore` to prevent tracking environments and modules.
+- Initialized React + TypeScript frontend using Vite.
+- Initialized Python backend with Virtual Environment.
+- Installed FastAPI and Uvicorn.
+- Verified both development servers are operational.
+- Generated Python `requirements.txt`.
