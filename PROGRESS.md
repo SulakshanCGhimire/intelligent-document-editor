@@ -34,3 +34,12 @@
 - Installed FastAPI and Uvicorn.
 - Verified both development servers are operational.
 - Generated Python `requirements.txt`.
+
+#### Day 3 (August 13, 2026)
+**Objective:** Integrate Tiptap into the React frontend.
+**Status:** Completed
+- Cleaned up default Vite React boilerplate.
+- Installed Tiptap core and React bindings.
+- Implemented `DocumentEditor` headless component.
+- Built a temporary toolbar to verify command execution (bold/italic).
+- Successfully rendered the rich-text engine in the browser.
