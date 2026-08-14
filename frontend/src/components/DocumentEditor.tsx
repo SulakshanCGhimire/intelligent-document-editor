@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
-import { Bold, Italic, Type, Heading1, Heading2, Heading3, Moon, Sun } from 'lucide-react'
+import { Bold, Italic, Type, Heading1, Heading2, Heading3, Heading4, Heading5, Heading6, Moon, Sun } from 'lucide-react'
 
 export const DocumentEditor = () => {
   // State to manage the theme. Defaults to dark.
@@ -10,7 +10,7 @@ export const DocumentEditor = () => {
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
-        heading: { levels: [1, 2, 3] },
+        heading: { levels: [1, 2, 3, 4, 5, 6] },
       }),
     ],
     content: '<h1>Project Proposal</h1><p>Start writing your semantic document here...</p>',
@@ -57,6 +57,27 @@ export const DocumentEditor = () => {
           >
             <Heading3 size={18} />
           </button>
+          <button 
+        onClick={() => editor.chain().focus().toggleHeading({ level: 4 }).run()}
+        className={editor.isActive('heading', { level: 4 }) ? 'active' : ''}
+        title="Heading 4"
+      >
+        <Heading4 size={18} />
+      </button>
+      <button 
+        onClick={() => editor.chain().focus().toggleHeading({ level: 5 }).run()}
+        className={editor.isActive('heading', { level: 5 }) ? 'active' : ''}
+        title="Heading 5"
+      >
+        <Heading5 size={18} />
+      </button>
+      <button 
+        onClick={() => editor.chain().focus().toggleHeading({ level: 6 }).run()}
+        className={editor.isActive('heading', { level: 6 }) ? 'active' : ''}
+        title="Heading 6"
+      >
+        <Heading6 size={18} />
+      </button>
         </div>
 
         <div className="toolbar-group">

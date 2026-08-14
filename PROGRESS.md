@@ -43,3 +43,13 @@
 - Implemented `DocumentEditor` headless component.
 - Built a temporary toolbar to verify command execution (bold/italic).
 - Successfully rendered the rich-text engine in the browser.
+
+#### Day 4 (August 14, 2026)
+**Objective:** Implement semantic heading hierarchy (H1, H2, H3) and build a clean, professional toolbar.
+**Status:** Completed
+- Configured Tiptap to natively support semantic heading hierarchy (H1, H2, H3, H4, H5, H6).
+- Built a professional, Word-inspired ribbon toolbar using lucide-react icons.
+- Implemented CSS variables to support full application theming.
+- Built a dynamic Light/Dark mode state switcher.
+- Fixed the flexbox layout shift bug affecting long documents.
+- Validated that HTML output matches semantic expectations (<h1>, not <p>).
