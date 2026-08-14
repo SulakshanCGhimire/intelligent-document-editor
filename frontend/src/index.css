@@ -1,7 +1,19 @@
+/* Deep Dark Mode Colors */
+:root {
+  --bg-app: #0f172a;        /* Slate 900 */
+  --bg-toolbar: #1e293b;    /* Slate 800 */
+  --bg-paper: #1e293b;      /* Slate 800 */
+  --text-main: #f1f5f9;     /* Slate 100 */
+  --text-muted: #94a3b8;    /* Slate 400 */
+  --border-color: #334155;  /* Slate 700 */
+  --neon-accent: #0ea5e9;   /* Sky 500 (Subtle Neon Blue) */
+  --neon-glow: rgba(14, 165, 233, 0.4);
+}
+
 body {
   margin: 0;
-  background-color: #f3f4f6; /* Light gray background */
-  color: #1f2937;
+  background-color: var(--bg-app);
+  color: var(--text-main);
   font-family: system-ui, -apple-system, sans-serif;
 }
 
@@ -11,31 +23,57 @@ body {
   height: 100vh;
 }
 
+/* Word-Style Ribbon Toolbar (Dark Mode) */
 .toolbar {
-  background-color: #ffffff;
-  border-bottom: 1px solid #e5e7eb;
-  padding: 10px 20px;
+  background-color: var(--bg-toolbar);
+  border-bottom: 1px solid var(--border-color);
+  padding: 12px 24px;
   display: flex;
-  gap: 8px;
+  align-items: center;
+  gap: 16px;
   position: sticky;
   top: 0;
   z-index: 10;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.toolbar-group {
+  display: flex;
+  gap: 4px;
+  padding-right: 16px;
+  border-right: 1px solid var(--border-color);
+}
+
+.toolbar-group:last-child {
+  border-right: none;
 }
 
 .toolbar button {
-  padding: 6px 12px;
-  border: 1px solid #e5e7eb;
-  background: white;
-  border-radius: 4px;
+  padding: 6px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-muted);
+  border-radius: 6px;
   cursor: pointer;
-  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.toolbar button:hover {
+  background: var(--border-color);
+  color: var(--text-main);
 }
 
 .toolbar button.active {
-  background: #e5e7eb;
-  font-weight: bold;
+  background: var(--bg-app);
+  color: var(--neon-accent);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 0 8px var(--neon-glow); /* Neon glow effect */
 }
 
+/* The Paper Canvas */
 .editor-wrapper {
   flex: 1;
   overflow-y: auto;
@@ -44,19 +82,21 @@ body {
   justify-content: center;
 }
 
-/* The actual "Paper" */
 .tiptap {
-  background: white;
+  background: var(--bg-paper);
   width: 100%;
-  max-width: 800px;
-  min-height: 1000px; /* A4-ish height */
-  padding: 60px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  max-width: 850px;
+  min-height: 1100px;
+  padding: 96px; /* 1-inch margins roughly */
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border-color);
   border-radius: 4px;
   outline: none;
+  color: var(--text-main);
 }
 
-/* Formatting inside the editor */
-.tiptap h1 { font-size: 2em; margin-top: 0; }
-.tiptap h2 { font-size: 1.5em; }
-.tiptap h3 { font-size: 1.17em; }
+/* Fix the Heading Rendering! */
+.tiptap p { margin-bottom: 1em; line-height: 1.6; }
+.tiptap h1 { font-size: 2.2em; font-weight: 700; margin-top: 0; margin-bottom: 0.5em; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;}
+.tiptap h2 { font-size: 1.8em; font-weight: 600; margin-top: 1.5em; margin-bottom: 0.5em; }
+.tiptap h3 { font-size: 1.4em; font-weight: 600; margin-top: 1.2em; margin-bottom: 0.5em; color: var(--neon-accent); }
