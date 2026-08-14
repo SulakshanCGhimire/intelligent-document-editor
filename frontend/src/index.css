@@ -1,19 +1,28 @@
-/* Deep Dark Mode Colors */
-:root {
-  --bg-app: #0f172a;        /* Slate 900 */
-  --bg-toolbar: #1e293b;    /* Slate 800 */
-  --bg-paper: #1e293b;      /* Slate 800 */
-  --text-main: #f1f5f9;     /* Slate 100 */
-  --text-muted: #94a3b8;    /* Slate 400 */
-  --border-color: #334155;  /* Slate 700 */
-  --neon-accent: #0ea5e9;   /* Sky 500 (Subtle Neon Blue) */
-  --neon-glow: rgba(14, 165, 233, 0.4);
+/* Theme Variables */
+.theme-light {
+  --bg-app: #f3f4f6;
+  --bg-toolbar: #ffffff;
+  --bg-paper: #ffffff;
+  --text-main: #1f2937;
+  --text-muted: #6b7280;
+  --border-color: #e5e7eb;
+  --active-accent: #2563eb; /* Standard Blue */
+  --active-glow: rgba(37, 99, 235, 0.2);
+}
+
+.theme-dark {
+  --bg-app: #0f172a;
+  --bg-toolbar: #1e293b;
+  --bg-paper: #1e293b;
+  --text-main: #f1f5f9;
+  --text-muted: #94a3b8;
+  --border-color: #334155;
+  --active-accent: #0ea5e9; /* Neon Sky Blue */
+  --active-glow: rgba(14, 165, 233, 0.4);
 }
 
 body {
   margin: 0;
-  background-color: var(--bg-app);
-  color: var(--text-main);
   font-family: system-ui, -apple-system, sans-serif;
 }
 
@@ -21,9 +30,12 @@ body {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  background-color: var(--bg-app);
+  color: var(--text-main);
+  transition: background-color 0.3s ease, color 0.3s ease; /* Smooth fade between themes */
 }
 
-/* Word-Style Ribbon Toolbar (Dark Mode) */
+/* Toolbar */
 .toolbar {
   background-color: var(--bg-toolbar);
   border-bottom: 1px solid var(--border-color);
@@ -34,7 +46,8 @@ body {
   position: sticky;
   top: 0;
   z-index: 10;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: background-color 0.3s ease;
 }
 
 .toolbar-group {
@@ -68,35 +81,36 @@ body {
 
 .toolbar button.active {
   background: var(--bg-app);
-  color: var(--neon-accent);
+  color: var(--active-accent);
   border: 1px solid var(--border-color);
-  box-shadow: 0 0 8px var(--neon-glow); /* Neon glow effect */
+  box-shadow: 0 0 8px var(--active-glow); 
 }
 
-/* The Paper Canvas */
+/* Editor Wrapper - BUG FIX: Removed flex centering */
 .editor-wrapper {
   flex: 1;
   overflow-y: auto;
   padding: 40px 20px;
-  display: flex;
-  justify-content: center;
 }
 
+/* The Paper Canvas - BUG FIX: Added margin: 0 auto */
 .tiptap {
   background: var(--bg-paper);
   width: 100%;
   max-width: 850px;
   min-height: 1100px;
-  padding: 96px; /* 1-inch margins roughly */
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  margin: 0 auto; /* Centers the paper safely */
+  padding: 96px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   border: 1px solid var(--border-color);
   border-radius: 4px;
   outline: none;
   color: var(--text-main);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
-/* Fix the Heading Rendering! */
+/* Headings */
 .tiptap p { margin-bottom: 1em; line-height: 1.6; }
 .tiptap h1 { font-size: 2.2em; font-weight: 700; margin-top: 0; margin-bottom: 0.5em; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;}
 .tiptap h2 { font-size: 1.8em; font-weight: 600; margin-top: 1.5em; margin-bottom: 0.5em; }
-.tiptap h3 { font-size: 1.4em; font-weight: 600; margin-top: 1.2em; margin-bottom: 0.5em; color: var(--neon-accent); }
+.tiptap h3 { font-size: 1.4em; font-weight: 600; margin-top: 1.2em; margin-bottom: 0.5em; color: var(--active-accent); }

@@ -1,8 +1,12 @@
+import { useState } from 'react'
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
-import { Bold, Italic, Type, Heading1, Heading2, Heading3 } from 'lucide-react'
+import { Bold, Italic, Type, Heading1, Heading2, Heading3, Moon, Sun } from 'lucide-react'
 
 export const DocumentEditor = () => {
+  // State to manage the theme. Defaults to dark.
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark')
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -12,7 +16,7 @@ export const DocumentEditor = () => {
     content: '<h1>Project Proposal</h1><p>Start writing your semantic document here...</p>',
     editorProps: {
       attributes: {
-        class: 'tiptap', // Applies our new CSS
+        class: 'tiptap', 
       },
     },
   })
@@ -20,11 +24,10 @@ export const DocumentEditor = () => {
   if (!editor) return null
 
   return (
-    <div className="app-container">
-      {/* PROFESSIONAL RIBBON TOOLBAR */}
+    // Apply the theme class to the root container dynamically
+    <div className={`app-container theme-${theme}`}>
       <div className="toolbar">
         
-        {/* Group 1: Typography */}
         <div className="toolbar-group">
           <button 
             onClick={() => editor.chain().focus().setParagraph().run()}
@@ -56,7 +59,6 @@ export const DocumentEditor = () => {
           </button>
         </div>
 
-        {/* Group 2: Formatting */}
         <div className="toolbar-group">
           <button 
             onClick={() => editor.chain().focus().toggleBold().run()}
@@ -71,6 +73,16 @@ export const DocumentEditor = () => {
             title="Italic"
           >
             <Italic size={18} />
+          </button>
+        </div>
+
+        {/* Theme Toggle Button - Pushed to the far right */}
+        <div className="toolbar-group" style={{ marginLeft: 'auto', borderRight: 'none' }}>
+          <button 
+            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            title="Toggle Theme"
+          >
+            {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
           </button>
         </div>
 
