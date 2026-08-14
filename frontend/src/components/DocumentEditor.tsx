@@ -2,43 +2,53 @@ import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 
 export const DocumentEditor = () => {
-  // Initialize the Tiptap editor
   const editor = useEditor({
     extensions: [
-      StarterKit, // Provides Paragraphs, Headings, Bold, Italic, etc.
+      StarterKit.configure({
+        heading: {
+          levels: [1, 2, 3], // Explicitly allow H1, H2, H3
+        },
+      }),
     ],
-    content: '<p>Start writing your document here...</p>',
-    // We add a class here so we can style the editor area later
-    editorProps: {
-      attributes: {
-        class: 'prose focus:outline-none min-h-[500px] border p-4 rounded-md',
-      },
-    },
+    content: '<h1>Document Title</h1><p>Start writing here...</p>',
   })
 
+  if (!editor) return null
+
   return (
-    <div className="editor-wrapper">
-      {/* 
-        This is a temporary toolbar just to prove it works. 
-        We will build a professional one later. 
-      */}
-      <div className="toolbar" style={{ marginBottom: '10px' }}>
+    <div className="app-container">
+      {/* PROFESSIONAL TOOLBAR */}
+      <div className="toolbar">
         <button 
-          onClick={() => editor?.chain().focus().toggleBold().run()}
-          style={{ fontWeight: editor?.isActive('bold') ? 'bold' : 'normal' }}
+          onClick={() => editor.chain().focus().setParagraph().run()}
+          className={editor.isActive('paragraph') ? 'active' : ''}
+        >
+          Normal Text
+        </button>
+        <button 
+          onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+          className={editor.isActive('heading', { level: 1 }) ? 'active' : ''}
+        >
+          H1
+        </button>
+        <button 
+          onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+          className={editor.isActive('heading', { level: 2 }) ? 'active' : ''}
+        >
+          H2
+        </button>
+        <button 
+          onClick={() => editor.chain().focus().toggleBold().run()}
+          className={editor.isActive('bold') ? 'active' : ''}
         >
           Bold
         </button>
-        <button 
-          onClick={() => editor?.chain().focus().toggleItalic().run()}
-          style={{ fontWeight: editor?.isActive('italic') ? 'bold' : 'normal' }}
-        >
-          Italic
-        </button>
       </div>
 
-      {/* This component actually renders the editor instance on the screen */}
-      <EditorContent editor={editor} />
+      {/* EDITOR CANVAS */}
+      <div className="editor-wrapper">
+        <EditorContent editor={editor} />
+      </div>
     </div>
   )
 }
