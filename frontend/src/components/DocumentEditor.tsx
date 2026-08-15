@@ -66,12 +66,40 @@ export const DocumentEditor = () => {
           <button onClick={() => editor.chain().focus().toggleOrderedList().run()} className={editor.isActive('orderedList') ? 'active' : ''} title="Numbered List"><ListOrdered size={18} /></button>
         </div>
 
-        {/* NEW - Group 4: Tables */}
+        {/* Group 4: Tables */}
         <div className="toolbar-group">
-          <button onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()} title="Insert 3x3 Table"><TableIcon size={18} /></button>
-          <button onClick={() => editor.chain().focus().addColumnAfter().run()} disabled={!editor.can().addColumnAfter()} title="Add Column"><BetweenVerticalStart size={18} /></button>
-          <button onClick={() => editor.chain().focus().addRowAfter().run()} disabled={!editor.can().addRowAfter()} title="Add Row"><BetweenHorizontalStart size={18} /></button>
-          <button onClick={() => editor.chain().focus().deleteTable().run()} disabled={!editor.can().deleteTable()} title="Delete Table" style={{ color: editor.can().deleteTable() ? '#ef4444' : 'inherit' }}><Trash2 size={18} /></button>
+          <button 
+            onMouseDown={(e) => e.preventDefault()} 
+            onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()} 
+            title="Insert 3x3 Table"
+          >
+            <TableIcon size={18} />
+          </button>
+          <button 
+            onMouseDown={(e) => e.preventDefault()} 
+            onClick={() => editor.chain().focus().addColumnAfter().run()} 
+            disabled={!editor.can().addColumnAfter()} 
+            title="Add Column"
+          >
+            <BetweenVerticalStart size={18} />
+          </button>
+          <button 
+            onMouseDown={(e) => e.preventDefault()} 
+            onClick={() => editor.chain().focus().addRowAfter().run()} 
+            disabled={!editor.can().addRowAfter()} 
+            title="Add Row"
+          >
+            <BetweenHorizontalStart size={18} />
+          </button>
+          <button 
+            onMouseDown={(e) => e.preventDefault()} 
+            onClick={() => editor.chain().focus().deleteTable().run()} 
+            disabled={!editor.can().deleteTable()} 
+            title="Delete Table" 
+            style={{ color: editor.can().deleteTable() ? '#ef4444' : 'inherit' }}
+          >
+            <Trash2 size={18} />
+          </button>
         </div>
 
         {/* Theme Toggle */}

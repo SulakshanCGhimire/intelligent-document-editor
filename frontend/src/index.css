@@ -8,6 +8,9 @@
   --border-color: #e5e7eb;
   --active-accent: #2563eb; /* Standard Blue */
   --active-glow: rgba(37, 99, 235, 0.2);
+  --border-color: #e5e7eb;
+  --table-border: #9ca3af; /* Stronger gray for light mode tables */
+  --active-accent: #2563eb;
 }
 
 .theme-dark {
@@ -19,6 +22,9 @@
   --border-color: #334155;
   --active-accent: #0ea5e9; /* Neon Sky Blue */
   --active-glow: rgba(14, 165, 233, 0.4);
+  --border-color: #334155;
+  --table-border: #64748b; /* Lighter slate for dark mode tables */
+  --active-accent: #0ea5e9;
 }
 
 body {
@@ -146,7 +152,7 @@ body {
 .tiptap table td,
 .tiptap table th {
   min-width: 1em;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--table-border);
   padding: 10px;
   vertical-align: top;
   box-sizing: border-box;
@@ -156,12 +162,6 @@ body {
 .tiptap table th {
   font-weight: 600;
   text-align: left;
-  background-color: rgba(0, 0, 0, 0.04); /* Subtle background for light theme headers */
-}
-
-/* Dark mode adjustment for table headers */
-.theme-dark .tiptap table th {
-  background-color: rgba(255, 255, 255, 0.05);
 }
 
 /* Tiptap applies this class when a user highlights multiple cells */
