@@ -53,3 +53,13 @@
 - Built a dynamic Light/Dark mode state switcher.
 - Fixed the flexbox layout shift bug affecting long documents.
 - Validated that HTML output matches semantic expectations (<h1>, not <p>).
+
+#### Day 5 (August 15, 2026)
+**Objective:** Implement semantic Lists (Bullet & Numbered) and Tables into the document editor.
+**Status:** Completed
+- Resolved strict versioning conflicts and ES Module import errors across Tiptap core and table extensions.
+- Integrated Tiptap extensions to natively support Bullet Lists, Ordered Lists, and semantic Tables.
+- Built explicit, user-friendly toolbar controls for custom table insertion (via prompts), adding rows/columns (directional), and deleting rows/columns based on active cursor state.
+- Fixed editor focus loss bugs during toolbar interactions by implementing native event prevention (preventDefault()).
+- Implemented dedicated high-contrast CSS variables (--table-border) to ensure sharp grid visibility in both Light and Dark themes.
+- Updated the table insertion logic to default to standard data cells (<td>) rather than forced structural headers (<th>) for better editing flexibility.
