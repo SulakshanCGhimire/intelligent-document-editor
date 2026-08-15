@@ -117,3 +117,59 @@ body {
 .tiptap h4 { font-size: 1.2em; font-weight: 600; margin-top: 1.2em; margin-bottom: 0.5em; }
 .tiptap h5 { font-size: 1em; font-weight: 700; margin-top: 1.2em; margin-bottom: 0.5em; }
 .tiptap h6 { font-size: 1em; font-weight: 600; margin-top: 1.2em; margin-bottom: 0.5em; }
+
+/* =========================================
+   Lists 
+========================================= */
+.tiptap ul, 
+.tiptap ol {
+  padding-left: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.tiptap li p {
+  margin-top: 0.25em;
+  margin-bottom: 0.25em;
+}
+
+/* =========================================
+   Tables 
+========================================= */
+.tiptap table {
+  border-collapse: collapse;
+  table-layout: fixed;
+  width: 100%;
+  margin-bottom: 2rem;
+  overflow: hidden;
+}
+
+.tiptap table td,
+.tiptap table th {
+  min-width: 1em;
+  border: 1px solid var(--border-color);
+  padding: 10px;
+  vertical-align: top;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.tiptap table th {
+  font-weight: 600;
+  text-align: left;
+  background-color: rgba(0, 0, 0, 0.04); /* Subtle background for light theme headers */
+}
+
+/* Dark mode adjustment for table headers */
+.theme-dark .tiptap table th {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Tiptap applies this class when a user highlights multiple cells */
+.tiptap .selectedCell:after {
+  z-index: 2;
+  position: absolute;
+  content: "";
+  left: 0; right: 0; top: 0; bottom: 0;
+  background: var(--active-glow);
+  pointer-events: none;
+}
