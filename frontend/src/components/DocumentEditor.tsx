@@ -39,6 +39,27 @@ export const DocumentEditor = () => {
 
   if (!editor) return null
 
+  const handleInsertTable = () => {
+    const rows = parseInt(window.prompt('Enter number of rows:', '3') || '0', 10)
+    const cols = parseInt(window.prompt('Enter number of columns:', '3') || '0', 10)
+    
+    if (rows > 0 && cols > 0) {
+      editor.chain().focus().insertTable({ rows, cols, withHeaderRow: false }).run()
+    }
+  }
+
+  const handleAddColumn = () => {
+    const pos = window.prompt('Type "L" to add Left, or "R" to add Right:', 'R')
+    if (pos?.toUpperCase() === 'L') editor.chain().focus().addColumnBefore().run()
+    if (pos?.toUpperCase() === 'R') editor.chain().focus().addColumnAfter().run()
+  }
+
+  const handleAddRow = () => {
+    const pos = window.prompt('Type "U" to add Up, or "D" to add Down:', 'D')
+    if (pos?.toUpperCase() === 'U') editor.chain().focus().addRowBefore().run()
+    if (pos?.toUpperCase() === 'D') editor.chain().focus().addRowAfter().run()
+  }
+
   return (
     <div className={`app-container theme-${theme}`}>
       <div className="toolbar">
@@ -68,36 +89,25 @@ export const DocumentEditor = () => {
 
         {/* Group 4: Tables */}
         <div className="toolbar-group">
-          <button 
-            onMouseDown={(e) => e.preventDefault()} 
-            onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()} 
-            title="Insert 3x3 Table"
-          >
+          <button onMouseDown={(e) => e.preventDefault()} onClick={handleInsertTable} title="Insert Custom Table">
             <TableIcon size={18} />
           </button>
-          <button 
-            onMouseDown={(e) => e.preventDefault()} 
-            onClick={() => editor.chain().focus().addColumnAfter().run()} 
-            disabled={!editor.can().addColumnAfter()} 
-            title="Add Column"
-          >
-            <BetweenVerticalStart size={18} />
+          
+          <button onMouseDown={(e) => e.preventDefault()} onClick={handleAddColumn} title="Add Column" style={{ fontSize: '13px', fontWeight: '600' }}>
+            + Col
           </button>
-          <button 
-            onMouseDown={(e) => e.preventDefault()} 
-            onClick={() => editor.chain().focus().addRowAfter().run()} 
-            disabled={!editor.can().addRowAfter()} 
-            title="Add Row"
-          >
-            <BetweenHorizontalStart size={18} />
+          <button onMouseDown={(e) => e.preventDefault()} onClick={() => editor.chain().focus().deleteColumn().run()} title="Delete Column" style={{ fontSize: '13px', fontWeight: '600', color: '#ef4444' }}>
+            - Col
           </button>
-          <button 
-            onMouseDown={(e) => e.preventDefault()} 
-            onClick={() => editor.chain().focus().deleteTable().run()} 
-            disabled={!editor.can().deleteTable()} 
-            title="Delete Table" 
-            style={{ color: editor.can().deleteTable() ? '#ef4444' : 'inherit' }}
-          >
+          
+          <button onMouseDown={(e) => e.preventDefault()} onClick={handleAddRow} title="Add Row" style={{ fontSize: '13px', fontWeight: '600', marginLeft: '8px' }}>
+            + Row
+          </button>
+          <button onMouseDown={(e) => e.preventDefault()} onClick={() => editor.chain().focus().deleteRow().run()} title="Delete Row" style={{ fontSize: '13px', fontWeight: '600', color: '#ef4444' }}>
+            - Row
+          </button>
+          
+          <button onMouseDown={(e) => e.preventDefault()} onClick={() => editor.chain().focus().deleteTable().run()} title="Delete Table" style={{ color: '#ef4444', marginLeft: '8px' }}>
             <Trash2 size={18} />
           </button>
         </div>
