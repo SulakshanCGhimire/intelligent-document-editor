@@ -63,3 +63,14 @@
 - Fixed editor focus loss bugs during toolbar interactions by implementing native event prevention (preventDefault()).
 - Implemented dedicated high-contrast CSS variables (--table-border) to ensure sharp grid visibility in both Light and Dark themes.
 - Updated the table insertion logic to default to standard data cells (<td>) rather than forced structural headers (<th>) for better editing flexibility.
+
+#### Day 6 (August 16, 2026)
+
+**Objective:** Finalize real-time multi-window synchronization, network resilience testing, and collaborative UI polish.
+**Status:** Completed
+
+- Stabilized global instances for `Y.Doc` and `WebsocketProvider` to completely prevent React Strict Mode lifecycle issues and HMR disconnections.
+- Migrated legacy packages to resolve version collisions, successfully adopting `@tiptap/extension-collaboration-caret` for Tiptap v3 architecture.
+- Integrated a real-time active collaborator avatar stack in the top toolbar utilizing Yjs awareness.
+- Validated real-time multi-window peer synchronization across typography, bullet/ordered lists, and dynamic table row/column modifications.
+- Implemented and verified dynamic Light and Dark theme switching with high-contrast UI variables.
