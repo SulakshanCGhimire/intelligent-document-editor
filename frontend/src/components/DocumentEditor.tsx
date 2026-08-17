@@ -7,6 +7,7 @@ import { TableCell } from '@tiptap/extension-table-cell'
 import { TableHeader } from '@tiptap/extension-table-header'
 import * as Y from 'yjs'
 import { WebsocketProvider } from 'y-websocket'
+import { IndexeddbPersistence } from 'y-indexeddb'
 import Collaboration from '@tiptap/extension-collaboration'
 import CollaborationCaret from '@tiptap/extension-collaboration-caret'
 
@@ -21,6 +22,13 @@ const ROOM_NAME = 'intelligent-doc-editor-room-alpha'
 // GLOBAL INITIALIZATION: Protects against React 18 Strict Mode double-invoke bugs
 const ydoc = new Y.Doc()
 const provider = new WebsocketProvider(WS_URL, ROOM_NAME, ydoc)
+
+// PERSISTENCE: Caches doc state locally in IndexedDB
+const persistence = new IndexeddbPersistence(ROOM_NAME, ydoc)
+
+persistence.on('synced', () => {
+  console.log('Content successfully loaded from local IndexedDB cache!')
+})
 
 interface DocumentEditorProps {
   userName?: string
