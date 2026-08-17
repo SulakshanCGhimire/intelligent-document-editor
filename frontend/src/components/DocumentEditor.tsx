@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
+import Paragraph from '@tiptap/extension-paragraph'
 import { Table } from '@tiptap/extension-table'
 import { TableRow } from '@tiptap/extension-table-row'
 import { TableCell } from '@tiptap/extension-table-cell'
@@ -14,7 +15,7 @@ import CollaborationCaret from '@tiptap/extension-collaboration-caret'
 import {
   Bold, Italic, Type, Heading1, Heading2, Heading3, Heading4, Heading5, Heading6,
   Moon, Sun, List, ListOrdered, Table as TableIcon, Trash2,
-  FileText, Download, Printer
+  FileText, Download, Printer, MoveVertical, Plus, Minus
 } from 'lucide-react'
 
 const WS_URL = import.meta.env.VITE_YJS_WS_URL ?? 'wss://demos.yjs.dev/ws'
@@ -31,6 +32,39 @@ persistence.on('synced', () => {
   console.log('Content successfully loaded from local IndexedDB cache!')
 })
 
+// CUSTOM PARAGRAPH EXTENSION: Natively supports line-height & paragraph spacing in Tiptap & Yjs
+const CustomParagraph = Paragraph.extend({
+  addAttributes() {
+    return {
+      ...this.parent?.(),
+      lineHeight: {
+        default: null,
+        parseHTML: element => element.style.lineHeight || null,
+        renderHTML: attributes => {
+          if (!attributes.lineHeight) return {}
+          return { style: `line-height: ${attributes.lineHeight};` }
+        },
+      },
+      spaceBefore: {
+        default: null,
+        parseHTML: element => element.style.marginTop || null,
+        renderHTML: attributes => {
+          if (!attributes.spaceBefore) return {}
+          return { style: `margin-top: ${attributes.spaceBefore};` }
+        },
+      },
+      spaceAfter: {
+        default: null,
+        parseHTML: element => element.style.marginBottom || null,
+        renderHTML: attributes => {
+          if (!attributes.spaceAfter) return {}
+          return { style: `margin-bottom: ${attributes.spaceAfter};` }
+        },
+      },
+    }
+  },
+})
+
 interface DocumentEditorProps {
   userName?: string
   userColor?: string
@@ -44,15 +78,20 @@ export const DocumentEditor = ({
   const [status, setStatus] = useState<'connecting' | 'connected' | 'disconnected'>('connecting')
   const [collaborators, setCollaborators] = useState<Array<{ name: string; color: string; clientId: number }>>([])
   
-  // File menu state & reference
+  // File menu & Spacing menu states & references
   const [fileMenuOpen, setFileMenuOpen] = useState(false)
-  const menuRef = useRef<HTMLDivElement>(null)
+  const [spacingMenuOpen, setSpacingMenuOpen] = useState(false)
+  const fileMenuRef = useRef<HTMLDivElement>(null)
+  const spacingMenuRef = useRef<HTMLDivElement>(null)
 
-  // Close dropdown when clicking outside
+  // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+      if (fileMenuRef.current && !fileMenuRef.current.contains(event.target as Node)) {
         setFileMenuOpen(false)
+      }
+      if (spacingMenuRef.current && !spacingMenuRef.current.contains(event.target as Node)) {
+        setSpacingMenuOpen(false)
       }
     }
     document.addEventListener('mousedown', handleClickOutside)
@@ -77,6 +116,25 @@ export const DocumentEditor = ({
   const handlePrintPdf = () => {
     window.print()
     setFileMenuOpen(false)
+  }
+
+  // Spacing helper handlers
+  const handleLineHeight = (value: string) => {
+    if (!editor) return
+    editor.chain().focus().updateAttributes('paragraph', { lineHeight: value }).run()
+    setSpacingMenuOpen(false)
+  }
+
+  const handleSpaceBefore = (value: string | null) => {
+    if (!editor) return
+    editor.chain().focus().updateAttributes('paragraph', { spaceBefore: value }).run()
+    setSpacingMenuOpen(false)
+  }
+
+  const handleSpaceAfter = (value: string | null) => {
+    if (!editor) return
+    editor.chain().focus().updateAttributes('paragraph', { spaceAfter: value }).run()
+    setSpacingMenuOpen(false)
   }
 
   // Track online peers via Yjs Awareness for the Google-style avatar stack
@@ -109,7 +167,9 @@ export const DocumentEditor = ({
         // @ts-ignore - Safely bypasses TS mismatch to prevent Prosemirror/Yjs history collisions
         history: false,
         heading: { levels: [1, 2, 3, 4, 5, 6] },
+        paragraph: false, // Replaced by CustomParagraph
       }),
+      CustomParagraph,
       Table.configure({ resizable: true }),
       TableRow,
       TableHeader,
@@ -163,7 +223,7 @@ export const DocumentEditor = ({
       <div className="toolbar">
 
         {/* Group 0: File Menu (Google Docs Style) */}
-        <div className="toolbar-group" ref={menuRef} style={{ position: 'relative' }}>
+        <div className="toolbar-group" ref={fileMenuRef} style={{ position: 'relative' }}>
           <button
             onClick={() => setFileMenuOpen(!fileMenuOpen)}
             onMouseDown={(e) => e.preventDefault()}
@@ -226,13 +286,68 @@ export const DocumentEditor = ({
           <button onClick={() => editor.chain().focus().toggleItalic().run()} className={editor.isActive('italic') ? 'active' : ''} title="Italic"><Italic size={18} /></button>
         </div>
 
-        {/* Group 3: Lists */}
+        {/* Group 3: Line & Paragraph Spacing Dropdown */}
+        <div className="toolbar-group" ref={spacingMenuRef} style={{ position: 'relative' }}>
+          <button
+            onClick={() => setSpacingMenuOpen(!spacingMenuOpen)}
+            onMouseDown={(e) => e.preventDefault()}
+            style={{ fontWeight: 600, padding: '6px 10px', gap: 6 }}
+            title="Line & Paragraph Spacing"
+          >
+            <MoveVertical size={16} /> Spacing
+          </button>
+
+          {spacingMenuOpen && (
+            <div
+              style={{
+                position: 'absolute',
+                top: '100%',
+                left: 0,
+                marginTop: '4px',
+                width: '210px',
+                background: 'var(--bg-toolbar)',
+                border: '1px solid var(--border-color)',
+                borderRadius: '6px',
+                boxShadow: '0 10px 25px rgba(0,0,0,0.2)',
+                zIndex: 100,
+                display: 'flex',
+                flexDirection: 'column',
+                padding: '6px',
+                gap: '2px',
+              }}
+            >
+              <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', padding: '4px 8px', textTransform: 'uppercase' }}>Line Spacing</div>
+              <button onMouseDown={(e) => e.preventDefault()} onClick={() => handleLineHeight('1.0')} style={{ justifyContent: 'flex-start', width: '100%', border: 'none', background: 'transparent', color: 'var(--text-main)', padding: '6px 10px', borderRadius: '4px', fontSize: '13px' }}>Single (1.0)</button>
+              <button onMouseDown={(e) => e.preventDefault()} onClick={() => handleLineHeight('1.15')} style={{ justifyContent: 'flex-start', width: '100%', border: 'none', background: 'transparent', color: 'var(--text-main)', padding: '6px 10px', borderRadius: '4px', fontSize: '13px' }}>1.15</button>
+              <button onMouseDown={(e) => e.preventDefault()} onClick={() => handleLineHeight('1.5')} style={{ justifyContent: 'flex-start', width: '100%', border: 'none', background: 'transparent', color: 'var(--text-main)', padding: '6px 10px', borderRadius: '4px', fontSize: '13px' }}>1.5 (Standard)</button>
+              <button onMouseDown={(e) => e.preventDefault()} onClick={() => handleLineHeight('2.0')} style={{ justifyContent: 'flex-start', width: '100%', border: 'none', background: 'transparent', color: 'var(--text-main)', padding: '6px 10px', borderRadius: '4px', fontSize: '13px' }}>Double (2.0)</button>
+
+              <div style={{ height: '1px', background: 'var(--border-color)', margin: '4px 0' }} />
+
+              <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', padding: '4px 8px', textTransform: 'uppercase' }}>Paragraph Spacing</div>
+              <button onMouseDown={(e) => e.preventDefault()} onClick={() => handleSpaceBefore('18px')} style={{ justifyContent: 'flex-start', gap: 6, width: '100%', border: 'none', background: 'transparent', color: 'var(--text-main)', padding: '6px 10px', borderRadius: '4px', fontSize: '13px' }}>
+                <Plus size={12} /> Add space before
+              </button>
+              <button onMouseDown={(e) => e.preventDefault()} onClick={() => handleSpaceBefore(null)} style={{ justifyContent: 'flex-start', gap: 6, width: '100%', border: 'none', background: 'transparent', color: 'var(--text-muted)', padding: '6px 10px', borderRadius: '4px', fontSize: '13px' }}>
+                <Minus size={12} /> Remove space before
+              </button>
+              <button onMouseDown={(e) => e.preventDefault()} onClick={() => handleSpaceAfter('24px')} style={{ justifyContent: 'flex-start', gap: 6, width: '100%', border: 'none', background: 'transparent', color: 'var(--text-main)', padding: '6px 10px', borderRadius: '4px', fontSize: '13px' }}>
+                <Plus size={12} /> Add space after
+              </button>
+              <button onMouseDown={(e) => e.preventDefault()} onClick={() => handleSpaceAfter(null)} style={{ justifyContent: 'flex-start', gap: 6, width: '100%', border: 'none', background: 'transparent', color: 'var(--text-muted)', padding: '6px 10px', borderRadius: '4px', fontSize: '13px' }}>
+                <Minus size={12} /> Remove space after
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Group 4: Lists */}
         <div className="toolbar-group">
           <button onClick={() => editor.chain().focus().toggleBulletList().run()} className={editor.isActive('bulletList') ? 'active' : ''} title="Bullet List"><List size={18} /></button>
           <button onClick={() => editor.chain().focus().toggleOrderedList().run()} className={editor.isActive('orderedList') ? 'active' : ''} title="Numbered List"><ListOrdered size={18} /></button>
         </div>
 
-        {/* Group 4: Tables */}
+        {/* Group 5: Tables */}
         <div className="toolbar-group">
           <button onMouseDown={(e) => e.preventDefault()} onClick={handleInsertTable} title="Insert Custom Table">
             <TableIcon size={18} />
