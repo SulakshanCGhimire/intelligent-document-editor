@@ -205,3 +205,26 @@ body {
   height: 1.2em;
   vertical-align: text-bottom;
 }
+
+/* =========================================
+   Print / PDF Export Styles
+========================================= */
+@media print {
+  .app-container {
+    background: white !important;
+  }
+  .toolbar {
+    display: none !important;
+  }
+  .editor-wrapper {
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+  .tiptap {
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    max-width: 100% !important;
+    color: black !important;
+  }
+}

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import { Table } from '@tiptap/extension-table'
@@ -13,7 +13,8 @@ import CollaborationCaret from '@tiptap/extension-collaboration-caret'
 
 import {
   Bold, Italic, Type, Heading1, Heading2, Heading3, Heading4, Heading5, Heading6,
-  Moon, Sun, List, ListOrdered, Table as TableIcon, Trash2
+  Moon, Sun, List, ListOrdered, Table as TableIcon, Trash2,
+  FileText, Download, Printer
 } from 'lucide-react'
 
 const WS_URL = import.meta.env.VITE_YJS_WS_URL ?? 'wss://demos.yjs.dev/ws'
@@ -42,6 +43,41 @@ export const DocumentEditor = ({
   const [theme, setTheme] = useState<'dark' | 'light'>('dark')
   const [status, setStatus] = useState<'connecting' | 'connected' | 'disconnected'>('connecting')
   const [collaborators, setCollaborators] = useState<Array<{ name: string; color: string; clientId: number }>>([])
+  
+  // File menu state & reference
+  const [fileMenuOpen, setFileMenuOpen] = useState(false)
+  const menuRef = useRef<HTMLDivElement>(null)
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setFileMenuOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  // Export as Markdown
+  const handleExportMarkdown = () => {
+    if (!editor) return
+    const textContent = editor.getText()
+    const blob = new Blob([textContent], { type: 'text/markdown;charset=utf-8' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = 'document.md'
+    link.click()
+    URL.revokeObjectURL(url)
+    setFileMenuOpen(false)
+  }
+
+  // Print / Save PDF via Browser
+  const handlePrintPdf = () => {
+    window.print()
+    setFileMenuOpen(false)
+  }
 
   // Track online peers via Yjs Awareness for the Google-style avatar stack
   useEffect(() => {
@@ -125,6 +161,53 @@ export const DocumentEditor = ({
   return (
     <div className={`app-container theme-${theme}`}>
       <div className="toolbar">
+
+        {/* Group 0: File Menu (Google Docs Style) */}
+        <div className="toolbar-group" ref={menuRef} style={{ position: 'relative' }}>
+          <button
+            onClick={() => setFileMenuOpen(!fileMenuOpen)}
+            onMouseDown={(e) => e.preventDefault()}
+            style={{ fontWeight: 600, padding: '6px 12px', gap: 6 }}
+            title="File Menu"
+          >
+            <FileText size={16} /> File
+          </button>
+
+          {fileMenuOpen && (
+            <div
+              style={{
+                position: 'absolute',
+                top: '100%',
+                left: 0,
+                marginTop: '4px',
+                width: '180px',
+                background: 'var(--bg-toolbar)',
+                border: '1px solid var(--border-color)',
+                borderRadius: '6px',
+                boxShadow: '0 10px 25px rgba(0,0,0,0.2)',
+                zIndex: 100,
+                display: 'flex',
+                flexDirection: 'column',
+                padding: '4px',
+              }}
+            >
+              <button
+                onClick={handleExportMarkdown}
+                onMouseDown={(e) => e.preventDefault()}
+                style={{ justifyContent: 'flex-start', gap: 8, width: '100%', border: 'none', background: 'transparent', color: 'var(--text-main)', padding: '8px 10px', borderRadius: '4px' }}
+              >
+                <Download size={14} /> Export Markdown
+              </button>
+              <button
+                onClick={handlePrintPdf}
+                onMouseDown={(e) => e.preventDefault()}
+                style={{ justifyContent: 'flex-start', gap: 8, width: '100%', border: 'none', background: 'transparent', color: 'var(--text-main)', padding: '8px 10px', borderRadius: '4px' }}
+              >
+                <Printer size={14} /> Print / Save PDF
+              </button>
+            </div>
+          )}
+        </div>
 
         {/* Group 1: Typography */}
         <div className="toolbar-group">
