@@ -13,6 +13,7 @@ import { IndexeddbPersistence } from 'y-indexeddb'
 import Collaboration from '@tiptap/extension-collaboration'
 import CollaborationCaret from '@tiptap/extension-collaboration-caret'
 import mammoth from 'mammoth'
+import { Document, Packer, Paragraph as DocxParagraph, TextRun } from 'docx'
 
 import {
   Bold, Italic, Underline as UnderlineIcon, Type, Heading1, Heading2, Heading3, Heading4, Heading5, Heading6,
@@ -110,6 +111,42 @@ export const DocumentEditor = ({
     const link = document.createElement('a')
     link.href = url
     link.download = 'document.md'
+    link.click()
+    URL.revokeObjectURL(url)
+    setFileMenuOpen(false)
+  }
+
+  const handleExportDocx = async () => {
+    if (!editor) return
+    const textContent = editor.getText()
+
+    // Split text by newlines and map each line to a distinct paragraph
+    const lines = textContent.split('\n')
+    const docxParagraphs = lines.map(line => 
+      new DocxParagraph({
+        children: [
+          new TextRun({
+            text: line || '',
+            size: 24, // 12pt
+          }),
+        ],
+      })
+    )
+
+    const doc = new Document({
+      sections: [
+        {
+          properties: {},
+          children: docxParagraphs,
+        },
+      ],
+    })
+
+    const blob = await Packer.toBlob(doc)
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = 'document.docx'
     link.click()
     URL.revokeObjectURL(url)
     setFileMenuOpen(false)
@@ -285,7 +322,7 @@ export const DocumentEditor = ({
                 top: '100%',
                 left: 0,
                 marginTop: '4px',
-                width: '180px',
+                width: '190px',
                 background: 'var(--bg-toolbar)',
                 border: '1px solid var(--border-color)',
                 borderRadius: '6px',
@@ -304,6 +341,13 @@ export const DocumentEditor = ({
                 <FileText size={14} /> Import File (.md/.txt/.docx)
               </button>
               <div style={{ height: '1px', background: 'var(--border-color)', margin: '4px 0' }} />
+              <button
+                onClick={handleExportDocx}
+                onMouseDown={(e) => e.preventDefault()}
+                style={{ justifyContent: 'flex-start', gap: 8, width: '100%', border: 'none', background: 'transparent', color: 'var(--text-main)', padding: '8px 10px', borderRadius: '4px' }}
+              >
+                <Download size={14} /> Export Word (.docx)
+              </button>
               <button
                 onClick={handleExportMarkdown}
                 onMouseDown={(e) => e.preventDefault()}
