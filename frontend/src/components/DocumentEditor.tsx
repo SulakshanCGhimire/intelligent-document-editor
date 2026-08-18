@@ -12,6 +12,7 @@ import { WebsocketProvider } from 'y-websocket'
 import { IndexeddbPersistence } from 'y-indexeddb'
 import Collaboration from '@tiptap/extension-collaboration'
 import CollaborationCaret from '@tiptap/extension-collaboration-caret'
+import mammoth from 'mammoth'
 
 import {
   Bold, Italic, Underline as UnderlineIcon, Type, Heading1, Heading2, Heading3, Heading4, Heading5, Heading6,
@@ -84,6 +85,7 @@ export const DocumentEditor = ({
   const [spacingMenuOpen, setSpacingMenuOpen] = useState(false)
   const fileMenuRef = useRef<HTMLDivElement>(null)
   const spacingMenuRef = useRef<HTMLDivElement>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   // Close dropdowns when clicking outside
   useEffect(() => {
@@ -117,6 +119,38 @@ export const DocumentEditor = ({
   const handlePrintPdf = () => {
     window.print()
     setFileMenuOpen(false)
+  }
+
+  // Trigger file import dialog
+  const handleTriggerImport = () => {
+    fileInputRef.current?.click()
+    setFileMenuOpen(false)
+  }
+
+  // Handle importing .md, .txt, and .docx files safely
+  const handleFileImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file || !editor) return
+
+    const fileName = file.name.toLowerCase()
+
+    try {
+      if (fileName.endsWith('.txt') || fileName.endsWith('.md')) {
+        const text = await file.text()
+        editor.commands.setContent(text)
+      } else if (fileName.endsWith('.docx')) {
+        const arrayBuffer = await file.arrayBuffer()
+        const result = await mammoth.convertToHtml({ arrayBuffer })
+        editor.commands.setContent(result.value)
+      } else {
+        alert('Please upload a .txt, .md, or .docx file.')
+      }
+    } catch (error) {
+      console.error('Error importing file:', error)
+      alert('Failed to parse and import the file.')
+    }
+
+    event.target.value = ''
   }
 
   // Spacing helper handlers
@@ -222,6 +256,15 @@ export const DocumentEditor = ({
 
   return (
     <div className={`app-container theme-${theme}`}>
+      {/* Hidden File Input for Imports */}
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={handleFileImport}
+        accept=".md,.txt,.docx"
+        style={{ display: 'none' }}
+      />
+
       <div className="toolbar">
 
         {/* Group 0: File Menu (Google Docs Style) */}
@@ -253,6 +296,14 @@ export const DocumentEditor = ({
                 padding: '4px',
               }}
             >
+              <button
+                onClick={handleTriggerImport}
+                onMouseDown={(e) => e.preventDefault()}
+                style={{ justifyContent: 'flex-start', gap: 8, width: '100%', border: 'none', background: 'transparent', color: 'var(--text-main)', padding: '8px 10px', borderRadius: '4px' }}
+              >
+                <FileText size={14} /> Import File (.md/.txt/.docx)
+              </button>
+              <div style={{ height: '1px', background: 'var(--border-color)', margin: '4px 0' }} />
               <button
                 onClick={handleExportMarkdown}
                 onMouseDown={(e) => e.preventDefault()}
