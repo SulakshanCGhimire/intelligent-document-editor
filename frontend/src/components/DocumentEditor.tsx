@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Paragraph from '@tiptap/extension-paragraph'
+import Underline from '@tiptap/extension-underline'
 import { Table } from '@tiptap/extension-table'
 import { TableRow } from '@tiptap/extension-table-row'
 import { TableCell } from '@tiptap/extension-table-cell'
@@ -13,7 +14,7 @@ import Collaboration from '@tiptap/extension-collaboration'
 import CollaborationCaret from '@tiptap/extension-collaboration-caret'
 
 import {
-  Bold, Italic, Type, Heading1, Heading2, Heading3, Heading4, Heading5, Heading6,
+  Bold, Italic, Underline as UnderlineIcon, Type, Heading1, Heading2, Heading3, Heading4, Heading5, Heading6,
   Moon, Sun, List, ListOrdered, Table as TableIcon, Trash2,
   FileText, Download, Printer, MoveVertical, Plus, Minus
 } from 'lucide-react'
@@ -170,6 +171,7 @@ export const DocumentEditor = ({
         paragraph: false, // Replaced by CustomParagraph
       }),
       CustomParagraph,
+      Underline,
       Table.configure({ resizable: true }),
       TableRow,
       TableHeader,
@@ -284,6 +286,7 @@ export const DocumentEditor = ({
         <div className="toolbar-group">
           <button onClick={() => editor.chain().focus().toggleBold().run()} className={editor.isActive('bold') ? 'active' : ''} title="Bold"><Bold size={18} /></button>
           <button onClick={() => editor.chain().focus().toggleItalic().run()} className={editor.isActive('italic') ? 'active' : ''} title="Italic"><Italic size={18} /></button>
+          <button onClick={() => editor.chain().focus().toggleUnderline().run()} className={editor.isActive('underline') ? 'active' : ''} title="Underline (Ctrl+U)"><UnderlineIcon size={18} /></button>
         </div>
 
         {/* Group 3: Line & Paragraph Spacing Dropdown */}
